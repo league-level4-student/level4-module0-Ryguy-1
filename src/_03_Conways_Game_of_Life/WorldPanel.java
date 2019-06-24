@@ -37,7 +37,7 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 		//   passing in the location.
 			for (int i = 0; i < cells.length; i++) {
 				for (int j = 0; j < cells[i].length; j++) {
-					cells[i][j] = new Cell(i*cpr,j*cpr , cellSize);
+					cells[i][j] = new Cell(i*cellSize,j*cellSize , cellSize);
 				}
 			}
 	}
@@ -99,18 +99,15 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 		for (int i = 0; i < cells.length; i++) {
 			for (int j = 0; j < cells[i].length; j++) {
 				livingNeighbors[i][j]=getLivingNeighbors(i,j);
+				System.out.println("stepped");
 			}
 		}
 		//8. check if each cell should live or die
-		for (int i = 0; i < livingNeighbors.length; i++) {
+
+		
+				for (int i = 0; i < livingNeighbors.length; i++) {
 			for (int j = 0; j < livingNeighbors.length; j++) {
-				if(livingNeighbors[i][j]<2) {
-					cells[i][j].isAlive=false;
-				}else if(livingNeighbors[i][j]>3) {
-					cells[i][j].isAlive=false;
-				}else if(livingNeighbors[i][j]==3) {
-					cells[i][j].isAlive=true;
-				}
+				cells[i][j].liveOrDie(livingNeighbors[i][j]);
 			}
 		}
 		
@@ -124,11 +121,113 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 	//   living neighbors there are of the 
 	//   cell identified by x and y
 	public int getLivingNeighbors(int x, int y){
-		for (int i = 0; i < cells.length; i++) {
-			for (int j = 0; j < cells[i].length; j++) {
-				if(x>=cellSize&&y>=cellSize //LEFT OFF HERE)
+		int counter=0;
+		
+		if(x==0&&y==0) {
+			if(cells[x+1][y].isAlive) {
+				counter+=1;
+			}if(cells[x][y+1].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y+1].isAlive) {
+				counter+=1;
 			}
 		}
+		else if(x==0&&y==cellsPerRow-1) {
+			if(cells[x][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y].isAlive) {
+				counter+=1;
+			}
+		}
+		else if(x==cellsPerRow-1&&y==cellsPerRow-1) {
+			if(cells[x-1][y].isAlive) {
+				counter+=1;
+			}if(cells[x-1][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x][y-1].isAlive) {
+				counter+=1;
+			}
+		}
+		else if(x==cellsPerRow-1&&y==0) {
+			if(cells[x-1][y].isAlive) {
+				counter+=1;
+			}if(cells[x-1][y+1].isAlive) {
+				counter+=1;
+			}if(cells[x][y+1].isAlive) {
+				counter+=1;
+			}
+		}else if(x==0) {
+			if(cells[x][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y+1].isAlive) {
+				counter+=1;
+			}if(cells[x][y+1].isAlive) {
+				counter+=1;
+			}
+		}else if(x==cellsPerRow-1) {
+			if(cells[x][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x-1][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x-1][y].isAlive) {
+				counter+=1;
+			}if(cells[x-1][y+1].isAlive) {
+				counter+=1;
+			}if(cells[x][y+1].isAlive) {
+				counter+=1;
+			}
+		}else if(y==0) {
+			if(cells[x-1][y].isAlive) {
+				counter+=1;
+			}if(cells[x-1][y+1].isAlive) {
+				counter+=1;
+			}if(cells[x][y+1].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y+1].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y].isAlive) {
+				counter+=1;
+			}
+		}else if(y==cellsPerRow-1) {
+			if(cells[x-1][y].isAlive) {
+				counter+=1;
+			}if(cells[x-1][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y-1].isAlive) {
+				counter+=1;
+			}if(cells[x+1][y].isAlive) {
+				counter+=1;
+			}
+		}
+
+		else {
+		if(cells[x-1][y-1].isAlive) {
+			counter+=1;
+		}if(cells[x][y-1].isAlive) {
+			counter+=1;
+		}if(cells[x][y+1].isAlive) {
+			counter+=1;
+		}if(cells[x-1][y].isAlive) {
+			counter+=1;
+		}if(cells[x+1][y].isAlive) {
+			counter+=1;
+		}if(cells[x-1][y+1].isAlive) {
+		counter+=1;
+		}if(cells[x][y+1].isAlive) {
+			counter+=1;
+		}if(cells[x+1][y+1].isAlive) {
+			counter+=1;
+		}
+		}
+		return counter;
 	}
 
 	@Override
@@ -153,7 +252,17 @@ public class WorldPanel extends JPanel implements MouseListener, ActionListener 
 		//10. Use e.getX() and e.getY() to determine
 		//    which cell is clicked. Then toggle
 		//    the isAlive variable for that cell.
-		
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				if(cells[i][j].getX()==e.getX()&&cells[i][j].getY()==e.getY()) {
+					if(cells[i][j].isAlive==true) {
+						cells[i][j].isAlive=false;
+					}else if(cells[i][j].isAlive==false) {
+						cells[i][j].isAlive=true;
+					}
+				}
+			}
+		}
 		
 		
 		
