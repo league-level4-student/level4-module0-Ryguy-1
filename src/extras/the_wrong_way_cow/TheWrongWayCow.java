@@ -45,15 +45,37 @@ public class TheWrongWayCow {
 
     public static int[] findWrongWayCow(final char[][] field) {
         // Fill in the code to return the x,y coordinate position of the
-        // head (letter 'c') of the wrong way cow!
-        
+    		// head (letter 'c') of the wrong way cow!
+    	int[][] verticalUpCows = new int[field.length][field[0].length];
+    	int[][] verticalDownCow = new int[field.length][field[0].length];
+    	int[][] horizontalRightCows = new int[field.length][field[0].length];
+    	int[][] horizontalLeftCows = new int[field.length][field[0].length];
+//doesn't check for multiple cows or the imaginary cows at each position. Essencially only checks one cow at each i and j location.
     		for (int i = 0; i < field.length; i++) {
-				for (int j = 0; j < field[i].length; j++) {
-					
+			for (int j = 0; j < field[i].length; j++) {
+				if(field[i][j] == 'c') {
+					if(field[i+1][j]=='o'&&field[i+2][j]=='w'&&i<=field.length-2) {
+						horizontalLeftCows[i][j]=field[i][j];
+					}else if(field[i-1][j]=='o'&&field[i-2][j]=='w'&&i>=2) {
+						horizontalRightCows[i][j]=field[i][j];
+					}else if(field[i][j+1]=='o'&&field[i][j+2]=='w'&&j<=field[0].length-2) {
+						verticalUpCows[i][j]=field[i][j];
+					}else if(field[i][j-1]=='o'&&field[i][j-2]=='w'&&j>=2) {
+						verticalUpCows[i][j]=field[i][j];
+					}
 				}
 			}
-    	
-    	
+		}
+    	int hlc=0;
+    	int hrc=0;
+    	int vuc=0;
+    	int vdc=0;
+    		for (int i = 0; i < horizontalLeftCows.length; i++) {
+				for (int j = 0; j < horizontalLeftCows[i].length; j++) {
+					hlc+=1;
+				}
+			}
+    		
     		int[] wrongXY = new int[2];
     	
         return wrongXY;
