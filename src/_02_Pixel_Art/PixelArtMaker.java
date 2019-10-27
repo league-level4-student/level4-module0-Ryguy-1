@@ -19,7 +19,7 @@ public class PixelArtMaker implements MouseListener, ActionListener{
 	private JFrame window;
 	private GridInputPanel gip;
 	private GridPanel gp;
-	private static final String DATA_FILE = "src/_02_Pixel_Art/pixelStateSaved.dat";
+	private static final String DATA_FILE = "src/_02_Pixel_Art/pixelStateSaved";
 	JButton saveButton = new JButton ("Save");
 	ColorSelectionPanel csp;
 	
@@ -36,11 +36,11 @@ public class PixelArtMaker implements MouseListener, ActionListener{
 	}
 
 	public void submitGridData(int w, int h, int r, int c) {
-		if(DATA_FILE.isEmpty()==false) {
-			gp = load();
-		}else {
-			gp = new GridPanel(w, h, r, c);
-		}
+		  gp = new GridPanel( w, h, r, c );
+
+	        if( new File( DATA_FILE ).exists() ) {
+	            gp = load();
+	        }
 		csp = new ColorSelectionPanel();
 		window.remove(gip);
 		window.add(gp);
@@ -82,13 +82,20 @@ public class PixelArtMaker implements MouseListener, ActionListener{
 	
 	
 	
-	public static void save(GridPanel data) {
-		try(FileOutputStream fOS = new FileOutputStream(new File(DATA_FILE)); ObjectOutputStream oos = new ObjectOutputStream(fOS)){
-			oos.writeObject(data);
-		}catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+	private boolean save(GridPanel grid) {
+        boolean success = false;
+
+        try( FileOutputStream fos = new FileOutputStream( new File( DATA_FILE ) );
+                ObjectOutputStream oos = new ObjectOutputStream( fos ) ) {
+            oos.writeObject( grid );
+            System.out.println( "Saving file: " + DATA_FILE );
+            success = true;
+        } catch( IOException e ) {
+            e.printStackTrace();
+        }
+
+        return success;
+    }
 	public static GridPanel load() {
 		try (FileInputStream fIS = new FileInputStream(new File(DATA_FILE)); ObjectInputStream oIS = new ObjectInputStream(fIS)){
 			return (GridPanel) oIS.readObject();
@@ -104,7 +111,7 @@ public class PixelArtMaker implements MouseListener, ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource()==saveButton) {
+		if(e.getSource()==this.saveButton) {
 			save(gp);
 		}
 		
